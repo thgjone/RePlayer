@@ -198,3 +198,15 @@ manually or ran to completion on its own.
 - Manual `cargo tauri dev` runs after M2–M4, per milestone above.
 - Full E2E per M4, same manual-verification style as the backend's own v0
   slice (real capture + external listener, eyeballed for correctness).
+- **Automated, on both sides of the boundary, but not across it**: a
+  `tauri::test::MockRuntime`-based Rust test (`src-tauri/src/commands.rs`)
+  replays a synthetic pcap scenario over real loopback UDP end to end,
+  bypassing the frontend entirely; a Playwright suite
+  (`frontend/tests/tauri-ipc.spec.ts`, against `tests/e2e-harness.tsx`)
+  drives the real rendered UI with Tauri's IPC mocked
+  (`@tauri-apps/api/mocks`), bypassing the Rust backend entirely. Together
+  they cover both sides of the command/event contract (right names, right
+  payload shapes, right UI reaction) without needing a real window — but
+  neither proves the two sides actually agree at runtime through the real
+  IPC bridge. That last link is still only the manual `cargo tauri dev`
+  check above.

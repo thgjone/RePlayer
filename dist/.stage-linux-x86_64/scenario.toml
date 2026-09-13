@@ -1,0 +1,13 @@
+[[recordings]]
+id = "sample"
+format = "pcap"
+paths = ["sample.pcap"]
+
+[[outputs]]
+id = "udp-out"
+kind = "udp"
+address = "127.0.0.1:5000"
+
+[[routes]]
+recording_id = "sample"
+output_id = "udp-out"
