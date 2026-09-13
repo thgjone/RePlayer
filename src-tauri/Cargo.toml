@@ -1,0 +1,47 @@
+[package]
+name = "replayrer"
+version = "0.1.0"
+description = "RePlayrer desktop app (Tauri shell over the replay-framework backend)"
+authors = ["Tor-Haakon Gjone"]
+license = "MIT"
+repository = "git@github.com:thgjone/RePlayer.git"
+edition = "2021"
+rust-version = "1.77.2"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "replayrer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.6.3", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+log = "0.4"
+tauri = { version = "2.11.3", features = [] }
+tauri-plugin-log = "2"
+
+# Path deps into the backend submodule. Work unchanged whether `backend/` is
+# a plain checkout or (as today) a git submodule — Cargo only cares that a
+# real directory exists at the path. Deliberately NOT part of backend's own
+# Cargo workspace, so backend stays independently buildable with no
+# awareness a Tauri shell exists on top of it (see docs/tauri_v0_plan.md).
+replay-core = { path = "../backend/crates/replay-core" }
+replay-engine = { path = "../backend/crates/replay-engine" }
+format-pcap = { path = "../backend/crates/format-pcap" }
+output-udp = { path = "../backend/crates/output-udp" }
+output-tcp = { path = "../backend/crates/output-tcp" }
+
+anyhow = "1.0.104"
+toml = "1.1.6"
+tokio = { version = "1.53.1", features = ["rt-multi-thread", "macros", "time", "net", "sync"] }
+tracing = "0.1.44"
+
+[dev-dependencies]
+etherparse = "0.21.0"
+pcap-file = "2.0.0"
+tauri = { version = "2.11.3", features = ["test"] }
+tempfile = "3.27.0"
