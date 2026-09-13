@@ -72,7 +72,12 @@ output_id = "udp-out"
 EOF
 
 log "building release bundle (also builds the frontend via beforeBuildCommand)"
-( cd "$SRC_TAURI_DIR" && cargo tauri build --bundles appimage )
+# linuxdeploy/appimagetool are themselves AppImages that tauri-bundler
+# downloads and runs — on a VM/container without FUSE (the common case),
+# that fails with exactly "failed to run linuxdeploy" and no further
+# detail. APPIMAGE_EXTRACT_AND_RUN=1 tells them to extract-and-run
+# instead of FUSE-mounting themselves.
+( cd "$SRC_TAURI_DIR" && NO_STRIP=true APPIMAGE_EXTRACT_AND_RUN=1 cargo tauri build --bundles appimage )
 
 APPIMAGE="$(find "$SRC_TAURI_DIR/target/release/bundle/appimage" -maxdepth 1 -iname "*.AppImage" | head -1)"
 if [ -z "$APPIMAGE" ]; then
